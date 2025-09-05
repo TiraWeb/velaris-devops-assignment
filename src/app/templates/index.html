@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="30">
+    <title>Velaris - Live Service Status</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #7c73e6;
+            --background-color: #f4f7fc;
+            --container-bg: #ffffff;
+            --text-color: #333d4b;
+            --label-color: #5a687b;
+            --border-color: #e5e9f2;
+            --code-bg: #eef1f8;
+            --error-color: #d9534f;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background: var(--container-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 2em;
+            margin: 0 0 10px 0;
+        }
+        .subtitle {
+            color: var(--label-color);
+            margin-bottom: 30px;
+        }
+        .status-box {
+            background: var(--container-bg);
+            border-radius: 12px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .status-row:last-child {
+            border-bottom: none;
+        }
+        .label {
+            font-weight: 600;
+            color: var(--label-color);
+        }
+        .value {
+            font-family: monospace;
+            background: var(--code-bg);
+            padding: 5px 10px;
+            border-radius: 6px;
+            color: var(--text-color);
+        }
+        .error-box {
+            background-color: #fff5f5;
+            padding: 20px;
+            border-radius: 12px;
+            color: var(--error-color);
+            border: 1px solid #f7d7d7;
+            text-align: center;
+        }
+        footer {
+            margin-top: 30px;
+            font-size: 0.8em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- THIS LINE IS THE FIX: Using the URL for the logo -->
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRc3G7B67AGE4NIdfvPtdlwbi0HfIsbMMnTAg&s" alt="Velaris Logo" class="logo">
+        
+        <h1>Live Service Status</h1>
+        <p class="subtitle">This page is served by a container running on AWS Fargate.</p>
+        
+        {% if error %}
+            <div class="error-box">
+                <strong>Error:</strong> {{ error }}
+            </div>
+        {% else %}
+            <div class="status-box">
+                <div class="status-row">
+                    <span class="label">Container ID:</span>
+                    <code class="value">{{ container_id }}</code>
+                </div>
+                <div class="status-row">
+                    <span class="label">Time Fetched from API (IST):</span>
+                    <code class="value">{{ fetched_time }}</code>
+                </div>
+                <div class="status-row">
+                    <span class="label">Container's Local Time (IST):</span>
+                    <code class="value">{{ local_time }}</code>
+                </div>
+                <div class="status-row">
+                    <span class="label">Last Check Status:</span>
+                    <code class="value">{{ status }}</code>
+                </div>
+            </div>
+        {% endif %}
+        
+        <footer>
+            &copy; 2025 Velaris
+        </footer>
+    </div>
+</body>
+</html>
