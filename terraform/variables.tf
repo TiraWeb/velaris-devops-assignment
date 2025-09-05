@@ -13,6 +13,6 @@ variable "project_name" {
 variable "alert_email" {
   description = "The email address to send SNS alerts to."
   type        = string
-  // IMPORTANT: You must change this to your email address.
+  // This is where the custom email address goes
   default     = "tiranpankaja@gmail.com"
 }

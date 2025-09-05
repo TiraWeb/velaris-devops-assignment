@@ -1,27 +1,26 @@
-# Local Terraform directories
+# Ignore local Terraform stuff
 .terraform/
 .terraform.lock.hcl
 
-# Local Terraform state files
+# Ignore local Terraform state files
 *.tfstate
 *.tfstate.*.backup
 
-# Crash log files
+# Ignore crash logs
 crash.log
 crash.*.log
 
-# Terraform plan files
+# Ignore Terraform plan files
 *.tfplan
 
-# Generated Lambda zip files
-# These are build artifacts and should not be in the repo
+# Ignore generated zip files (build artifacts)
 terraform/*.zip
 *.zip
 
-# Our build directory
+# Ignore the build directory
 build/
 
-# IDE / OS specific files
+# Ignore IDE / OS specific files
 .DS_Store
 .vscode/
 

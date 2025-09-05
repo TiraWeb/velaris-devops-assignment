@@ -8,19 +8,19 @@ from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 
-# Get config from environment variables
+# getting config from env vars
 DYNAMODB_TABLE = os.environ.get("DYNAMODB_TABLE", "velaris-time-validation")
 AWS_REGION = os.environ.get("AWS_REGION", "ap-south-1")
 
-# It's better to create the client once
+# create the dynamodb client once so we don't do it on every request
 dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
 table = dynamodb.Table(DYNAMODB_TABLE)
 
-# Define our desired readable format
+# how the date should look
 DATE_FORMAT = "%B %d, %Y, %I:%M:%S %p IST"
 
 def get_container_id():
-    """Fetches the unique container ID from the ECS metadata endpoint."""
+    """Gets the container ID from ECS metadata."""
     try:
         metadata_uri = os.environ.get('ECS_CONTAINER_METADATA_URI_V4')
         if not metadata_uri:
@@ -48,14 +48,14 @@ def home():
             item = response['Item']
             status = item.get('status', 'N/A')
             
-            # Get the raw time string from the database
+            # get the raw time string from the database
             fetched_time_raw = item.get('fetched_time', 'N/A')
             
-            # Format the time string if it's not an error
+            # format the time string if it's not an error
             if fetched_time_raw not in ["N/A", "ERROR"]:
-                # Parse the ISO string into a datetime object
+                # parse the ISO string into a datetime object
                 dt_object = datetime.fromisoformat(fetched_time_raw)
-                # Format it into our readable string
+                # format it into a readable string
                 fetched_time = dt_object.strftime(DATE_FORMAT)
             else:
                 fetched_time = fetched_time_raw
@@ -65,7 +65,7 @@ def home():
     except Exception as e:
         error_message = f"An unexpected error occurred: {str(e)}"
 
-    # Generate and format the container's current local time
+    # generate and format the container's current local time
     now_ist = datetime.now(ZoneInfo("Asia/Kolkata"))
     local_time_formatted = now_ist.strftime(DATE_FORMAT)
 

@@ -1,9 +1,9 @@
-# ECS Cluster
+# The ECS cluster
 resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}-cluster"
 }
 
-# Application Load Balancer
+# The load balancer
 resource "aws_lb" "main" {
   name               = "${var.project_name}-alb"
   internal           = false
@@ -39,7 +39,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# IAM Roles for ECS
+# IAM roles for the ECS tasks
 resource "aws_iam_role" "ecs_task_execution_role" {
   name = "${var.project_name}_ecs_task_execution_role"
   assume_role_policy = jsonencode({
@@ -93,12 +93,12 @@ resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
   policy_arn = aws_iam_policy.ecs_task_policy.arn
 }
 
-# ECS Task Definition and Service
+# The task definition and service for the app
 resource "aws_ecs_task_definition" "app" {
   family                   = "${var.project_name}-app-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = "256"  # 0.25 vCPU
+  cpu                      = "256"  # .25 vCPU
   memory                   = "512"  # 512 MiB
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
@@ -133,7 +133,7 @@ resource "aws_ecs_service" "main" {
   name            = "${var.project_name}-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.app.arn
-  desired_count   = 2 # The initial count when you first apply
+  desired_count   = 2 # initial count on first deploy
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -148,8 +148,7 @@ resource "aws_ecs_service" "main" {
     container_port   = 80
   }
 
-  # ADD THIS BLOCK to the existing resource
-  # This prevents Terraform from overwriting the changes made by our Lambda
+  # This stops Terraform from messing with the count the lambda changes
   lifecycle {
     ignore_changes = [desired_count]
   }

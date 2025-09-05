@@ -24,7 +24,7 @@ def send_alert(subject, message):
 def lambda_handler(event, context):
     print("Starting health and time validation check.")
     
-    # 1. Fetch time from API
+    # 1. Get time from the API
     try:
         response = requests.get(TIME_API_URL, timeout=10)
         response.raise_for_status()
@@ -45,13 +45,13 @@ def lambda_handler(event, context):
         send_alert("Validation Alert: Time API Failure", msg)
         return {'statusCode': 500, 'body': json.dumps(msg)}
 
-    # 2. Get local time and validate correctness
+    # 2. Get our local time and check if it's correct
     status = "UNKNOWN"
     try:
         local_time_utc = datetime.now(timezone.utc)
         
-        # --- THIS IS THE FIX ---
-        # Create the IST timezone correctly using timedelta
+        # this was the fix for the timezone issue
+        # create the IST timezone correctly using timedelta
         ist_timezone = timezone(timedelta(hours=5, minutes=30))
         local_time_in_ist = local_time_utc.astimezone(ist_timezone)
         
@@ -69,8 +69,8 @@ def lambda_handler(event, context):
         if server_response.status_code != 200:
              status = "FAILED"
              msg = f"Own application health check failed with status code {server_response.status_code}"
-             print(msg) # Log the failure
-             # Only send an alert if the time validation hadn't already failed
+             print(msg) # log the failure
+             # only send an alert if the time validation hadn't already failed
              if status != "FAILED":
                 send_alert("Validation Alert: Application Unhealthy", msg)
 
@@ -79,7 +79,7 @@ def lambda_handler(event, context):
         msg = f"Failed to check server or validate time: {e}"
         send_alert("Validation Alert: Server Unreachable or Invalid", msg)
         
-    # 4. Persist results to DynamoDB
+    # 4. Save the results to DynamoDB
     try:
         table.put_item(
             Item={

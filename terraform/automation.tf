@@ -1,4 +1,4 @@
-# --- SECTION 1: Time Checker Lambda and SNS ---
+# Lambda that checks time and sends alerts
 
 resource "aws_iam_role" "lambda_exec" {
   name = "${var.project_name}_lambda_exec_role"
@@ -39,7 +39,7 @@ resource "aws_lambda_function" "time_checker" {
   runtime          = "python3.9"
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
   
-  # THIS IS THE FIX: Increase the timeout from 3s to 15s
+  # upped the timeout, was failing sometimes
   timeout          = 15
 
   environment {
@@ -66,7 +66,7 @@ resource "aws_lambda_permission" "allow_cloudwatch" {
   source_arn    = aws_cloudwatch_event_rule.every_5_minutes.arn
 }
 
-# --- SECTION 2: Business Hours Automation ---
+# Stuff to turn the service on and off during business hours
 
 resource "aws_iam_role" "business_hours_lambda_role" {
   name = "${var.project_name}-business-hours-lambda-role"
@@ -95,9 +95,9 @@ resource "aws_lambda_function" "business_hours_controller" {
   filename         = data.archive_file.business_hours_lambda_zip.output_path
   function_name    = "${var.project_name}-business-hours-controller"
   role             = aws_iam_role.business_hours_lambda_role.arn
-  handler          = "handler.handler" # Corrected handler name
+  handler          = "handler.handler" # fixed the handler name
   runtime          = "python3.9"
-  source_code_hash = data.archive_file.business_hours_lambda_zip.output_base64sha256 # Corrected typo from sha26
+  source_code_hash = data.archive_file.business_hours_lambda_zip.output_base64sha256 # fixed a typo here
   environment {
     variables = {
       ECS_CLUSTER_NAME = aws_ecs_cluster.main.name
@@ -107,11 +107,11 @@ resource "aws_lambda_function" "business_hours_controller" {
 }
 resource "aws_cloudwatch_event_rule" "start_business_hours" {
   name                = "${var.project_name}-start-work"
-  schedule_expression = "cron(0 9 * * ? *)" # 9 AM UTC
+  schedule_expression = "cron(0 9 * * ? *)" # 9 AM UTC (start of day)
 }
 resource "aws_cloudwatch_event_rule" "stop_business_hours" {
   name                = "${var.project_name}-stop-work"
-  schedule_expression = "cron(0 18 * * ? *)" # 6 PM UTC
+  schedule_expression = "cron(0 18 * * ? *)" # 6 PM UTC (end of day)
 }
 resource "aws_cloudwatch_event_target" "start_ecs_service" {
   rule  = aws_cloudwatch_event_rule.start_business_hours.name

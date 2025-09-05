@@ -1,20 +1,19 @@
-# Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /usr/src/app
 
-# Copy the requirements file into the container
+# Copy the requirements file
 COPY src/app/requirements.txt ./
 
-# Install any needed packages specified in requirements.txt
+# Install python packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application's code
+# Copy the source code
 COPY src/app/ .
 
-# Make port 80 available to the world outside this container
+# Expose port 80
 EXPOSE 80
 
-# Run app.py when the container launches
+# Command to run the python script
 CMD ["python", "app.py"]
