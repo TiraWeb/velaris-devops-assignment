@@ -24,5 +24,5 @@ build/
 .DS_Store
 .vscode/
 
-
+# Ignore this build
 terraform/.terraform/providers/registry.terraform.io/hashicorp/aws/5.100.0/windows_amd64/terraform-provider-aws_v5.100.0_x5.exe
