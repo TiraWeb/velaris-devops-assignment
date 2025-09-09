@@ -16,3 +16,10 @@ variable "alert_email" {
   // This is where the custom email address goes
   default     = "tiranpankaja@gmail.com"
 }
+
+variable "abstract_api_key" {
+  description = "API key for the Abstract Timezone API."
+  type        = string
+  sensitive   = true # This will hide the value 
+  default     = "3b414b15823a424d88bd1e7e9e70ba6c"
+}

@@ -47,6 +47,7 @@ resource "aws_lambda_function" "time_checker" {
       SNS_TOPIC_ARN  = aws_sns_topic.alerts.arn
       DYNAMODB_TABLE = aws_dynamodb_table.time_validation.name
       ALB_DNS_NAME   = aws_lb.main.dns_name
+      ABSTRACT_API_KEY = var.abstract_api_key
     }
   }
 }
